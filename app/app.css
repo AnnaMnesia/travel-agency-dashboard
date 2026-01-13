@@ -11,17 +11,20 @@
 @theme {
   --font-figtree: "Figtree", sans-serif;
   --font-inter: "Inter", sans-serif;
-  --color-dark-100: #1f1f36;
-  --color-dark-200: #141627;
-  --color-dark-300: #101828;
-  --color-dark-400: #2e2c48;
-  --color-gray-100: #7f7e83;
-  --color-gray-200: #eaecf0;
-  --color-gray-500: #667085;
-  --color-gray-700: #344054;
-  --color-primary-50: #e9f3fb;
-  --color-primary-100: #256ff1;
-  --color-primary-500: #175cd3;
+  --color-dark-100: #1c1f2e;
+  --color-dark-200: #15182a;
+  --color-dark-300: #0f1220;
+  --color-dark-400: #2a2d44;
+
+  --color-gray-100: #8b8fa3;
+  --color-gray-200: #eef0f6;
+  --color-gray-500: #6b7088;
+  --color-gray-700: #3a3f55;
+
+  --color-primary-50: #e6f4ff;
+  --color-primary-100: #3cc0ff;
+  --color-primary-500: #1ea7ff;
+
   --color-light-100: #ecf2ef;
   --color-light-200: #f9fbfc;
   --color-light-300: #f2f4f7;
@@ -181,7 +184,7 @@
     }
 
     .container {
-      @apply flex flex-col gap-9 mt-2.5;
+      @apply flex flex-col  gap-9 mt-2.5;
 
       header {
         @apply flex flex-col gap-6 overflow-hidden;
@@ -348,7 +351,7 @@
   .nav-items {
     @apply flex flex-col px-6 h-full;
     .container {
-      @apply flex flex-col justify-between h-full;
+      @apply h-full flex flex-col justify-between ;
       nav {
         @apply flex flex-col gap-3.5 pt-9;
       }
