@@ -1,14 +1,13 @@
-import { account, appwriteConfig, database } from "./client";
-import { OAuthProvider, Query, ID } from "appwrite";
+import { ID, OAuthProvider, Query } from "appwrite";
+import { account, database, appwriteConfig } from "~/appwrite/client";
 import { redirect } from "react-router";
 
-// Fetch existing user by account ID
 export const getExistingUser = async (id: string) => {
   try {
     const { documents, total } = await database.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.equal("accountId", id)]
+      [Query.equal("accountId", id)],
     );
     return total > 0 ? documents[0] : null;
   } catch (error) {
@@ -17,20 +16,6 @@ export const getExistingUser = async (id: string) => {
   }
 };
 
-// Login with Google OAuth2
-export const loginWithGoogle = async () => {
-  try {
-    account.createOAuth2Session(
-      OAuthProvider.Google,
-      `${window.location.origin}/`,
-      `${window.location.origin}/404`
-    );
-  } catch (error) {
-    console.error("Error during OAuth2 session creation:", error);
-  }
-};
-
-// Store user data after successful login
 export const storeUserData = async () => {
   try {
     const user = await account.get();
@@ -51,7 +36,7 @@ export const storeUserData = async () => {
         name: user.name,
         imageUrl: profilePicture,
         joinedAt: new Date().toISOString(),
-      }
+      },
     );
 
     if (!createdUser.$id) redirect("/sign-in");
@@ -60,12 +45,11 @@ export const storeUserData = async () => {
   }
 };
 
-// Fetch Google profile picture using access token
 const getGooglePicture = async (accessToken: string) => {
   try {
     const response = await fetch(
       "https://people.googleapis.com/v1/people/me?personFields=photos",
-      { headers: { Authorization: `Bearer ${accessToken}` } }
+      { headers: { Authorization: `Bearer ${accessToken}` } },
     );
     if (!response.ok) throw new Error("Failed to fetch Google profile picture");
 
@@ -77,8 +61,26 @@ const getGooglePicture = async (accessToken: string) => {
   }
 };
 
-// Get current authenticated user
-// If not authenticated, redirect to sign-in page
+export const loginWithGoogle = async () => {
+  try {
+    account.createOAuth2Session(
+      OAuthProvider.Google,
+      `${window.location.origin}/`,
+      `${window.location.origin}/404`,
+    );
+  } catch (error) {
+    console.error("Error during OAuth2 session creation:", error);
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    await account.deleteSession("current");
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};
+
 export const getUser = async () => {
   try {
     const user = await account.get();
@@ -90,7 +92,7 @@ export const getUser = async () => {
       [
         Query.equal("accountId", user.$id),
         Query.select(["name", "email", "imageUrl", "joinedAt", "accountId"]),
-      ]
+      ],
     );
 
     return documents.length > 0 ? documents[0] : redirect("/sign-in");
@@ -100,15 +102,12 @@ export const getUser = async () => {
   }
 };
 
-// Fetch all users with pagination
-// limit: number of users to fetch
-// offset: number of users to skip
 export const getAllUsers = async (limit: number, offset: number) => {
   try {
     const { documents: users, total } = await database.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.limit(limit), Query.offset(offset)]
+      [Query.limit(limit), Query.offset(offset)],
     );
 
     if (total === 0) return { users: [], total };
@@ -117,15 +116,5 @@ export const getAllUsers = async (limit: number, offset: number) => {
   } catch (e) {
     console.log("Error fetching users");
     return { users: [], total: 0 };
-  }
-};
-
-// Logout current user
-// Redirect to sign-in page after logout
-export const logoutUser = async () => {
-  try {
-    await account.deleteSession("current");
-  } catch (error) {
-    console.error("Error during logout:", error);
   }
 };

@@ -14,6 +14,7 @@ export const loader = async () => {
   return { users, total };
 };
 
+
 const AllUsers = ({ loaderData }: Route.ComponentProps) => {
   const { users } = loaderData;
 
