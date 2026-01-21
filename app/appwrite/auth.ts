@@ -19,14 +19,18 @@ export const getExistingUser = async (id: string) => {
 export const storeUserData = async () => {
   try {
     const user = await account.get();
-    if (!user) throw new Error("User not found");
+    if (!user) return;
 
-    const { providerAccessToken } = (await account.getSession("current")) || {};
-    const profilePicture = providerAccessToken
-      ? await getGooglePicture(providerAccessToken)
+    // ✅ PREVENT DUPLICATES
+    const existingUser = await getExistingUser(user.$id);
+    if (existingUser) return;
+
+    const session = await account.getSession("current");
+    const profilePicture = session?.providerAccessToken
+      ? await getGooglePicture(session.providerAccessToken)
       : null;
 
-    const createdUser = await database.createDocument(
+    await database.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       ID.unique(),
@@ -38,8 +42,6 @@ export const storeUserData = async () => {
         joinedAt: new Date().toISOString(),
       },
     );
-
-    if (!createdUser.$id) redirect("/sign-in");
   } catch (error) {
     console.error("Error storing user data:", error);
   }
@@ -65,8 +67,8 @@ export const loginWithGoogle = async () => {
   try {
     account.createOAuth2Session(
       OAuthProvider.Google,
-      `${window.location.origin}/`,
-      `${window.location.origin}/404`,
+      `${window.location.origin}/oauth-success`,
+      `${window.location.origin}/sign-in`,
     );
   } catch (error) {
     console.error("Error during OAuth2 session creation:", error);

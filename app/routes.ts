@@ -24,6 +24,7 @@ export default [
   // 🌍 Public
   layout("routes/root/page-layout.tsx", [
     index("routes/root/travel-page.tsx"),
+    route("oauth-success", "routes/root/oauth-success.tsx"), // ✅ ADD THIS
     route("travel/:tripId", "routes/root/travel-detail.tsx"),
     route("travel/:tripId/success", "routes/root/payment-success.tsx"),
   ]),
