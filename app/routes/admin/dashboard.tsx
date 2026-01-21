@@ -28,21 +28,18 @@ import { tripXAxis, tripyAxis, userXAxis, useryAxis } from "~/constants";
 import { redirect } from "react-router";
 
 export const clientLoader = async () => {
-  const [
-    user,
-    dashboardStats,
-    trips,
-    userGrowth,
-    tripsByTravelStyle,
-    allUsers,
-  ] = await Promise.all([
-    await getUser(),
-    await getUsersAndTripsStats(),
-    await getAllTrips(4, 0),
-    await getUserGrowthPerDay(),
-    await getTripsByTravelStyle(),
-    await getAllUsers(4, 0),
-  ]);
+  // 🔐 AUTH FIRST (must finish before anything else)
+  const user = await getUser(); // redirects if not authenticated
+
+  // ✅ SAFE: user is authenticated now
+  const [dashboardStats, trips, userGrowth, tripsByTravelStyle, allUsers] =
+    await Promise.all([
+      getUsersAndTripsStats(),
+      getAllTrips(4, 0),
+      getUserGrowthPerDay(),
+      getTripsByTravelStyle(),
+      getAllUsers(4, 0),
+    ]);
 
   const allTrips = trips.allTrips.map(({ $id, tripDetails, imageUrls }) => ({
     id: $id,

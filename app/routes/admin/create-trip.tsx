@@ -16,12 +16,21 @@ import { useNavigate } from "react-router";
 
 export const loader = async () => {
   const response = await fetch("https://restcountries.com/v3.1/all");
+
+  if (!response.ok) {
+    return [];
+  }
+
   const data = await response.json();
 
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
   return data.map((country: any) => ({
-    name: country.flag + country.name.common,
-    coordinates: country.latlng,
-    value: country.name.common,
+    name: `${country.flag ?? ""} ${country.name?.common ?? ""}`,
+    coordinates: country.latlng ?? [],
+    value: country.name?.common ?? "",
     openStreetMap: country.maps?.openStreetMap,
   }));
 };
